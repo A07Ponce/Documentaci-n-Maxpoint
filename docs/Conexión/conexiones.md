@@ -4,84 +4,111 @@ title: Administración de Conexiones
 sidebar_label: Conexiones
 ---
 
-# Administración de Conexiones
+# Módulo de Conexiones (MXP-Connections)
 
-## ❓ Pregunta principal  
-¿Cómo puedo crear, editar y administrar las conexiones en MaxPoint?  
+## 1. Propósito y alcance  
+El módulo de **Conexiones** en MaxPoint gestiona los enlaces entre **servidores, adaptadores y repositorios** previamente configurados.  
 
-## ✅ Respuesta clara y breve  
-En el módulo **Conexiones** de MaxPoint puedes gestionar los enlaces entre servidores, adaptadores y repositorios previamente creados. Desde aquí podrás **crear nuevas conexiones**, **visualizar las existentes**, **activarlas o inactivarlas** y **editar su configuración** para garantizar una correcta integración de datos en los procesos de carga.  
+- Permite crear nuevas conexiones de forma controlada.  
+- Garantiza la correcta integración de datos en los procesos de carga.  
+- Asegura la disponibilidad y consistencia de las conexiones durante la ejecución de procesos.  
 
----
-
-## 📋 Detalles paso a paso  
-
-### 🔹 Acceso a la sección Conexiones  
-1. En el menú lateral, dirígete a **CONFIGURADOR**.  
-2. Selecciona **Integración > Conexión > Conexiones**.  
-3. Se mostrará la lista de conexiones existentes.  
-
-### 🔹 Crear una conexión  
-1. Haz clic en el botón **Crear conexión**.  
-2. Ingresa la información requerida:  
-   - Nombre representativo.  
-   - Servidor (selección de lista desplegable).  
-   - Adaptador (selección de lista desplegable con opción de búsqueda).  
-   - Repositorio (selección de lista desplegable con opción de búsqueda).  
-   - Descripción (opcional).  
-3. Haz clic en **Guardar conexión**.  
-4. El sistema confirmará con el mensaje: ✅ *Conexión creada correctamente*.  
-
-### 🔹 Editar una conexión  
-1. En la lista, localiza la conexión deseada.  
-2. Haz clic en el ícono de **editar (✏️)**.  
-3. Modifica los datos necesarios (nombre, servidor, adaptador, repositorio o descripción).  
-4. Haz clic en **Actualizar conexión**.  
-5. El sistema mostrará la confirmación: ✅ *Actualizado correctamente*.  
-
-### 🔹 Activar o inactivar una conexión  
-1. Ubica la conexión en la lista.  
-2. Haz clic en el ícono correspondiente en la columna **Acciones**.  
-3. Confirma en el cuadro de diálogo: *¿Está seguro que desea activar/inactivar?*  
-4. La conexión cambiará de estado y el sistema confirmará la acción.  
-
-:::important  
-No es posible inactivar una conexión vinculada a un proceso activo.  
-:::  
+ℹ️ Para un correcto funcionamiento, este módulo depende de:  
+- **MXP-Servers** (servidores configurados).  
+- **MXP-Adapters** (adaptadores disponibles).  
+- **MXP-Repositories** (repositorios registrados).  
 
 ---
 
-## 📊 Campos/Parámetros importantes  
-
-- **Código** → Identificador único de la conexión (Ejemplo: C001).  
-- **Nombre** → Nombre asignado por el usuario.  
-- **Servidor** → Dirección del servidor asociado.  
-- **Adaptador** → Tipo de base de datos o servicio (ej: SQL Server, MariaDB, MongoDB).  
-- **Repositorio** → Repositorio o base de datos vinculada.  
-- **Estado** → Activo / Inactivo.  
-- **Acciones** → Opciones disponibles: editar, ver detalles, activar/inactivar.  
+## 2. Descripción general del sistema  
+- **Microservicio**: `mxpv2.integration.connections`  
+- **Rol principal**: administrar relaciones entre componentes de integración.  
+- **Función crítica**: habilitar la comunicación entre orígenes y destinos de datos a través de configuraciones seguras y gestionables.  
 
 ---
 
-## 💡 Notas y consejos  
+## 3. Arquitectura y componentes  
 
-- Usa la barra de búsqueda para filtrar conexiones rápidamente por **nombre**.  
-- Ajusta la cantidad de registros visibles en la tabla (10, 20, 50 o 100).  
-- Antes de crear una conexión, asegúrate de tener configurados **servidores, adaptadores y repositorios**.  
+### 3.1. Capa de conexión  
+| Componente | Código | Descripción |
+|------------|--------|-------------|
+| Conexión lógica | C001 | Relación entre servidor, adaptador y repositorio configurados. |
+| Control de estado | C002 | Gestión de estados Activo/Inactivo con validación de dependencias. |
 
----
-
-## 🔄 Acciones disponibles  
-
-- **Crear conexión** → Registrar una nueva conexión.  
-- **Editar conexión** → Modificar datos de una conexión existente.  
-- **Ver detalles** → Consultar información de la conexión.  
-- **Activar conexión** → Habilitar una conexión previamente inactiva.  
-- **Inactivar conexión** → Deshabilitar una conexión (si no está vinculada a procesos).  
+### 3.2. Interfaz de gestión  
+| Componente | Código | Descripción |
+|------------|--------|-------------|
+| UI de Conexiones | C003 | Interfaz en MaxPoint que permite crear, editar, activar/inactivar y visualizar conexiones. |
 
 ---
 
-## 🔗 Ejemplo de consulta en lenguaje natural  
+## 4. Gestión de procesos  
 
-- **Usuario**: "¿Cómo creo una nueva conexión en MaxPoint?"  
-- **IA responde**: "Ingresa a **Configurador > Integración > Conexión > Conexiones**, haz clic en **Crear conexión**, completa los campos requeridos (nombre, servidor, adaptador y repositorio) y guarda la conexión. El sistema confirmará la creación."  
+### Flujo estándar de conexión  
+1. **Creación** → el usuario define nombre, servidor, adaptador y repositorio.  
+2. **Validación** → el sistema verifica duplicados y dependencias.  
+3. **Activación** → la conexión queda disponible para procesos de integración.  
+4. **Inactivación** → la conexión se deshabilita si no está vinculada a un proceso activo.  
+5. **Edición** → el usuario puede actualizar parámetros (servidor, repositorio, adaptador, descripción).  
+
+---
+
+## 5. Puntos de integración  
+El módulo conecta con:  
+- **Entrada** → servidores y adaptadores previamente creados.  
+- **Salida** → repositorios disponibles para los procesos ETL.  
+- **Rol central** → coordinar la disponibilidad de conexiones para los procesos de integración en toda la plataforma.  
+
+---
+
+## 6. Patrones de conexión  
+- **Configuración única** → cada conexión tiene un identificador único.  
+- **Dependencia controlada** → no se puede inactivar una conexión si está vinculada a un proceso.  
+- **Gestión centralizada** → todas las conexiones se administran desde un único módulo en MaxPoint.  
+
+---
+
+## 7. Escenarios de uso  
+
+✅ **Caso exitoso**  
+El usuario crea una conexión con servidor, adaptador y repositorio válidos → validación correcta → conexión activa → disponible para procesos.  
+
+⚠️ **Posibles fallos**  
+- **Error al crear** → nombre duplicado o parámetros incompletos.  
+  - Acción recomendada: revisar que no exista otra conexión con el mismo nombre.  
+- **Error al inactivar** → la conexión está vinculada a un proceso activo.  
+  - Acción recomendada: liberar dependencias antes de inactivar.  
+- **Error en edición** → servidor o repositorio no disponible.  
+  - Acción recomendada: validar que los componentes estén activos.  
+
+---
+
+## 8. Preguntas frecuentes (para IA Support)  
+
+**Q:** ¿Cómo creo una nueva conexión en MaxPoint?  
+**A:** Ingresa a *Configurador > Integración > Conexión > Conexiones*, haz clic en *Crear conexión*, completa los campos requeridos y guarda. El sistema confirmará la creación.  
+
+**Q:** ¿Puedo inactivar cualquier conexión?  
+**A:** No. Solo puedes inactivar conexiones que no estén vinculadas a un proceso activo.  
+
+**Q:** ¿Cómo sé si mi conexión está activa?  
+**A:** Revisa la columna **Estado** en la lista de conexiones. Si dice *Activo*, está habilitada.  
+
+**Q:** ¿Qué hacer si al guardar me sale error de duplicado?  
+**A:** Cambia el nombre o valida que no exista otra conexión con la misma configuración.  
+
+---
+
+## 9. Referencias  
+- `mxpv2.integration.connections/readme.md`  
+- Documentación relacionada:  
+  - **MXP-Servers**  
+  - **MXP-Adapters**  
+  - **MXP-Repositories**  
+
+---
+
+## 10. Contacto  
+- **Equipo responsable**: Integraciones MaxPoint  
+- **Canal de soporte**: #mxp-integraciones (Slack interno)  
+- **Escalamiento**: Arquitectura de datos → Liderazgo técnico  

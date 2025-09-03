@@ -4,69 +4,112 @@ title: Administración de Adaptadores
 sidebar_label: Adaptadores
 ---
 
-# Administración de Adaptadores
+# Módulo de Adaptadores (MXP-Adapters)
 
-## ❓ Pregunta principal
-¿Cómo puedo administrar los adaptadores en MaxPoint?
+## 1. Propósito y alcance
+El módulo **Adaptadores** en MaxPoint permite gestionar los diferentes **conectores** usados para la integración de sistemas.  
 
-## ✅ Respuesta clara y breve
-En el módulo **Adaptadores** de MaxPoint puedes gestionar los diferentes adaptadores usados en las integraciones del sistema. Aquí puedes **listar, crear, editar, activar o inactivar** adaptadores según tus necesidades.
+- Habilita la comunicación entre fuentes de datos externas (Bases de datos, APIs).  
+- Asegura la disponibilidad y consistencia en los procesos ETL.  
+- Permite crear, editar, activar o inactivar adaptadores según las necesidades de integración.  
 
----
-
-## 📋 Detalles paso a paso
-
-### Acceder a la lista de adaptadores
-1. Inicia sesión en la plataforma MaxPoint.
-2. En el menú principal, ve a **Configurador > Integraciones > Adaptadores**.
-3. Se mostrará la lista con todos los adaptadores registrados.
-
-### Crear un nuevo adaptador
-1. Haz clic en **Crear adaptador**.
-2. Completa los siguientes campos: **Código, Tipo de adaptador, Nombre y Versión**.
-3. Revisa la información ingresada.
-4. Haz clic en **Guardar** para confirmar.
-
-### Editar un adaptador existente
-1. Ubica el adaptador en la lista.
-2. Haz clic en el ícono de **editar (✏️)**.
-3. Modifica los datos requeridos.
-4. Haz clic en **Guardar**.
-5. El sistema mostrará el mensaje: *Actualizado correctamente*.
-
-### Cambiar estado (Activar/Inactivar)
-1. Busca el adaptador que deseas modificar.
-2. Haz clic en el ícono de **activar/inactivar**.
-3. Confirma la acción en el cuadro de diálogo.
-4. El sistema mostrará el mensaje: *Actualizado correctamente*.
+ℹ️ Para un correcto funcionamiento, este módulo se relaciona con:  
+- **MXP-Servers** (servidores registrados).  
+- **MXP-Repositories** (repositorios disponibles).  
+- **MXP-Connections** (conexiones que enlazan adaptadores con otros componentes).  
 
 ---
 
-## 📊 Campos/Parámetros importantes
-- **Código** → Identificador único del adaptador (Ej: A0001).  
-- **Tipo de adaptador** → Puede ser *Base de datos* o *API*.  
-- **Nombre** → Nombre asignado al adaptador.  
-- **Versión** → Versión actual del adaptador.  
-- **Estado** → Activo / Inactivo.  
-- **Acciones** → Editar (✏️) o Visualizar (👁️).  
+## 2. Descripción general del sistema
+- **Microservicio**: `mxpv2.integration.adapters`  
+- **Rol principal**: administrar adaptadores disponibles en la plataforma.  
+- **Función crítica**: garantizar que existan conectores válidos y actualizados para las integraciones de datos.  
 
 ---
 
-## 💡 Notas y consejos
-- Usa la **barra de búsqueda** para localizar un adaptador por código, nombre o tipo.  
-- No pueden existir adaptadores **duplicados por nombre y versión**.  
-- Cambiar el estado a *Inactivo* no elimina el adaptador, solo lo deshabilita.  
+## 3. Arquitectura y componentes
+
+### 3.1. Capa de configuración  
+| Componente           | Código | Descripción |
+|----------------------|--------|-------------|
+| Registro de adaptador| A001   | Permite crear un nuevo adaptador en la plataforma. |
+| Control de estado    | A002   | Maneja activación/inactivación de adaptadores. |
+
+### 3.2. Capa de gestión  
+| Componente          | Código | Descripción |
+|---------------------|--------|-------------|
+| UI Adaptadores      | A003   | Interfaz en MaxPoint para crear, editar, listar y visualizar adaptadores. |
 
 ---
 
-## 🔄 Acciones disponibles
-- **Crear adaptador** → Agregar un nuevo adaptador al sistema.  
-- **Editar adaptador** → Modificar información ya registrada.  
-- **Visualizar adaptador** → Consultar detalles en modo de solo lectura.  
-- **Activar/Inactivar adaptador** → Cambiar el estado de uso del adaptador.  
+## 4. Gestión de procesos  
+
+### Flujo estándar de adaptador  
+1. **Creación** → el usuario define Código, Tipo, Nombre y Versión.  
+2. **Validación** → el sistema verifica duplicados por nombre y versión.  
+3. **Activación** → el adaptador queda disponible para conexiones y procesos ETL.  
+4. **Edición** → permite actualizar información (tipo, nombre, versión).  
+5. **Inactivación** → deshabilita el adaptador sin eliminarlo físicamente.  
 
 ---
 
-## 🔗 Ejemplo de consulta en lenguaje natural
-- **Usuario:** "¿Cómo puedo inactivar un adaptador en MaxPoint?"  
-- **IA debería responder:** "Entra al módulo **Adaptadores**, busca el registro que quieres inactivar y haz clic en el ícono de inactivar en la columna Acciones. Confirma la acción y el adaptador quedará marcado como Inactivo."  
+## 5. Puntos de integración
+El módulo conecta con:  
+- **Entrada** → servidores y configuraciones definidas en la plataforma.  
+- **Salida** → conexiones (MXP-Connections) que consumen los adaptadores.  
+- **Rol central** → proveer conectores válidos para garantizar comunicación entre sistemas externos y MaxPoint.  
+
+---
+
+## 6. Patrones de configuración
+- **Identificador único** → cada adaptador se registra con un código único (ej. A0001).  
+- **Dependencia controlada** → un adaptador no se puede eliminar si está vinculado a una conexión activa.  
+- **Gestión centralizada** → todos los adaptadores se administran desde un único módulo en MaxPoint.  
+
+---
+
+## 7. Escenarios de uso  
+
+✅ **Caso exitoso**  
+El usuario crea un adaptador con datos válidos → validación correcta → queda en estado *Activo* → disponible para conexiones.  
+
+⚠️ **Posibles fallos**  
+- **Error al crear** → duplicado de nombre y versión.  
+  - Acción recomendada: cambiar nombre o revisar adaptadores existentes.  
+- **Error al inactivar** → el adaptador está en uso dentro de una conexión activa.  
+  - Acción recomendada: liberar dependencias antes de inactivar.  
+- **Error en edición** → campos obligatorios no completados.  
+  - Acción recomendada: validar información ingresada.  
+
+---
+
+## 8. Preguntas frecuentes (para IA Support)  
+
+**Q:** ¿Cómo creo un nuevo adaptador en MaxPoint?  
+**A:** Ingresa a *Configurador > Integraciones > Adaptadores*, haz clic en *Crear adaptador*, completa Código, Tipo, Nombre y Versión, y guarda.  
+
+**Q:** ¿Puedo inactivar cualquier adaptador?  
+**A:** Solo si no está vinculado a una conexión activa.  
+
+**Q:** ¿Qué diferencia hay entre *Inactivar* y *Eliminar*?  
+**A:** Inactivar deshabilita el adaptador, pero no lo borra; Eliminar lo remueve permanentemente (solo posible si no tiene dependencias).  
+
+**Q:** ¿Cómo busco un adaptador específico?  
+**A:** Usa la barra de búsqueda por código, nombre o tipo en la lista de adaptadores.  
+
+---
+
+## 9. Referencias  
+- `mxpv2.integration.adapters/readme.md`  
+- Documentación relacionada:  
+  - **MXP-Servers**  
+  - **MXP-Repositories**  
+  - **MXP-Connections**  
+
+---
+
+## 10. Contacto  
+- **Equipo responsable**: Integraciones MaxPoint  
+- **Canal de soporte**: #mxp-integraciones (Slack interno)  
+- **Escalamiento**: Arquitectura de datos → Liderazgo técnico  
+
